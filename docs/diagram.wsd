@@ -1,0 +1,17 @@
+@startuml
+class User{
+    -username: str
+    -email:str
+    -passwword:str
+}
+class Role{
+    -name:str
+    -descripcion: str
+}
+class File{
+    +name : str
+    +body: byte
+    +lenght: long
+}
+User -- Role
+@enduml
