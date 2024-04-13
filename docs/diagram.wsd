@@ -1,19 +1,42 @@
-@startuml
+@startuml ClassDiagram
 class User{
     -username: str
     -email:str
     -passwword:str
     -text_record : list
+    +creat_acount()
+    +login()
+    +delete_acount()
+    +edit_password()
+    +insert_text()
+    +open_savetext()
+    +edit_text()
+    +delete_text()
+    
 }
 class Role{
     -name:str
     -descripcion: str
+    +change_role()
+}
+enum Roles{
+    user
+    admin
 }
 class Text{
-    +data : str
-    +lenght: long
-    +decoded : bool
-    +language : str
+    -data : str
+    -lenght: long
+    -encripted_text : str
+    -text_password: str
+    -language : str
+    +save_text()
+    +search_text()
+    +delete_text()
+    +encryp_text(a:data): encripted_text
+    +decipher_text(b:encripted_text): data
+    +check_lenght(c:lenght):bool
+    +edit_text(d:new_data):data
 }
 User -- Role
+Role - Roles
 @enduml
