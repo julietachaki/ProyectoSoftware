@@ -10,7 +10,10 @@ class User{
     +edit_password()
     +insert_text()
     +open_savetext()
+    +save_text()
     +edit_text()
+    +delete_text()
+    +search_text()
     +delete_text()
     
 }
@@ -26,17 +29,19 @@ enum Roles{
 class Text{
     -data : str
     -lenght: long
-    -encripted_text : str
-    -text_password: str
     -language : str
-    +save_text()
-    +search_text()
-    +delete_text()
-    +encryp_text(a:data): encripted_text
-    +decipher_text(b:encripted_text): data
     +check_lenght(c:lenght):bool
     +edit_text(d:new_data):data
+    +encrypt_text(a: data)
 }
+class encryptedText{
+    -data : str
+    -lenght: long
+    -text_password: str
+    +decipher_text(): text
+}
+
 User -- Role
 Role - Roles
+Text -- encryptedText
 @enduml
