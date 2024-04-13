@@ -3,15 +3,17 @@ class User{
     -username: str
     -email:str
     -passwword:str
+    -text_record : list
 }
 class Role{
     -name:str
     -descripcion: str
 }
-class File{
-    +name : str
-    +body: byte
+class Text{
+    +data : str
     +lenght: long
+    +decoded : bool
+    +language : str
 }
 User -- Role
 @enduml
