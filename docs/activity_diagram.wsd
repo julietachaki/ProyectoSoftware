@@ -1,0 +1,29 @@
+@startuml ActivityDiagram
+|Usuario|
+|#AntiqueWhite|Sistema|
+|#LightPink|Base de Datos|
+|Usuario|
+start
+if (regitrado) then (si)
+    :Iniciar sesion;    
+|Base de Datos|
+    :validar usuario y contraseña;
+else (no)
+    
+    :Registrarse;
+repeat
+|Sistema|
+    :validar email;
+
+    if (valido?) then (no)
+        repeat while (valido?) is (no)
+    else (si)
+|Base de Datos|
+        :registrar nuevo usuario;
+        :<<datastore>> Usuarios;|
+    
+
+
+
+stop
+@enduml
