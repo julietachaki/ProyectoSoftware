@@ -1,0 +1,21 @@
+services:
+    postgresql:
+        container_name: postgresql-servidor
+        image: postgres:15.4-bullseye
+
+        networks:
+            - mired
+        ports:
+            - "5433:5432"
+        environment:
+            - POSTGRES_PASSWORD=juli2004
+            - POSTGRES_DB= encriptador
+            - POSTGRES_USER=julieta
+            - PGDATA=/var/lib/postgresql/data/pgdata
+        volumes:
+            # es buena practica path relativo desde el proyecto ./_data:/var/lib/postgresql
+            - ./_data:/var/lib/postgresql/data
+        restart: always
+
+networks:
+    mired:
