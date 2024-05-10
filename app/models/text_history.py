@@ -1,21 +1,52 @@
 from dataclasses import dataclass
+from typing import List
 
 from app import db
+from app.models.text import Text
 
 
 @dataclass(init=False, repr=True, eq=True)
 class TextHistory(db.Model):
-    __tablename__ = "text_history"
+    __tablename__ = "text_histories"
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    entries: list[str] = db.Column(db.ARRAY(db.String(255)), nullable=False, default=[])
+    text_id: int = db.Column(db.Integer, db.ForeignKey("texts.id"), nullable=False)
+    content: str = db.Column(db.String(120), nullable=False)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-    # Definición de la relación inversa con la tabla 'texto' (texto)
-    texts = db.relationship("Texto", back_populates="history")
+    def save(self) -> "TextHistory":
+        db.session.add(self)
+        db.session.commit()
+        return self
 
-    def add_entry(self, entry: str):
-        """Add a new entry to the history."""
-        self.entries.append(entry)
+    def delete(self) -> None:
+        db.session.delete(self)
+        db.session.commit()
 
-    def view_history(self):
-        """View the entire history."""
-        return self.entries
+    @classmethod
+    def find(cls, id: int) -> "TextHistory":
+        return cls.query.get(id)
+
+    @classmethod
+    def find_by(cls, **kwargs) -> List["TextHistory"]:
+        return cls.query.filter_by(**kwargs).all()
+
+    @staticmethod
+    def get_versions_of_text(text_id: int) -> List["TextHistory"]:
+        # Obtiene todas las versiones de un texto específico.
+        return (
+            TextHistory.query.filter_by(text_id=text_id)
+            .order_by(TextHistory.timestamp.desc())
+            .all()
+        )
+
+    def change_to_version(self, version_id: int) -> None:
+        # Cambia a una versión específica del texto.
+        version = TextHistory.find(version_id)
+        #! ESTO NO SE HACE
+        from app.models.text import \
+            Text  # Importa dentro de la función o método
+
+        if version:
+            text = Text.find(self.text_id)
+            text.content = version.content
+            db.session.commit()
