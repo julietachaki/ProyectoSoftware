@@ -10,7 +10,7 @@ from app.models.text import Text
 @dataclass(init=False, repr=True, eq=True)
 class Encriptador(db.Model):
     __tablename__ = "encriptador"
-    id: int = db.Column(db.Integer, db.ForeignKey('texts.id'), primary_key=True)
+    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content : str = db.Column(db.String(120), nullable=False)
     encoded_content: bytes = db.Column(db.LargeBinary, nullable=False)
 
@@ -32,8 +32,8 @@ class Encriptador(db.Model):
 
     @classmethod
     def find(cls, id: int) -> "Encriptador":
-        return super().find(id)
+        return cls.query.get(id)
 
     @classmethod
     def find_by(cls, **kwargs) -> List["Encriptador"]:
-        return super().find_by(**kwargs)
+        return cls.find_by(**kwargs)

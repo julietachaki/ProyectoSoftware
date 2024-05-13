@@ -28,8 +28,25 @@ class EncriptadorTestCase(unittest.TestCase):
         encriptador.save()
         self.assertGreaterEqual(encriptador.id, 1)
         self.assertEqual(encriptador.content, "Texto de Prueba")
+    
+    def test_encriptador_delete(self):
+        encriptador = Encriptador()
+        encriptador.content="Texto de Prueba"
+        encriptador.encrypt_content()
+        encriptador.save()
+        encriptador.delete()
+        self.assertIsNone(Encriptador.query.get(encriptador.id))
 
-
+    def test_encriptador_find(self):
+        encriptador = Encriptador()
+        encriptador.content="Texto de Prueba"
+        encriptador.encrypt_content()
+        encriptador.save()
+        encriptador_find = encriptador.find(1)
+        self.assertIsNotNone(encriptador_find)
+        self.assertEqual(encriptador_find.id, encriptador.id)
+        self.assertEqual(encriptador_find.content, encriptador.content)
+        self.assertEqual(encriptador_find.encoded_content, encriptador.encoded_content)
     def test_encriptador_encrypt_content(self):
         encriptador = Encriptador()
         encriptador.content = "Texto de Prueba"
