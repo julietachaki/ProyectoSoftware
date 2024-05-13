@@ -1,11 +1,7 @@
 import unittest
 
-from cryptography.fernet import Fernet
-from flask import current_app
-
 from app import create_app, db
 from app.models.encriptador import Encriptador
-from app.models.text import Text
 
 
 class EncriptadorTestCase(unittest.TestCase):
@@ -20,9 +16,26 @@ class EncriptadorTestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def test_app(self):
-        self.assertIsNotNone(current_app)
-
+    def test_encriptador(self):
+        encriptador = Encriptador()
+        encriptador.content = "Texto de Prueba"
+        self.assertEqual(encriptador.content, "Texto de Prueba")
     
+    def test_encriptador_save(self):
+        encriptador = Encriptador()
+        encriptador.content="Texto de Prueba"
+        encriptador.encrypt_content()
+        encriptador.save()
+        self.assertGreaterEqual(encriptador.id, 1)
+        self.assertEqual(encriptador.content, "Texto de Prueba")
+
+
+    def test_encriptador_encrypt_content(self):
+        encriptador = Encriptador()
+        encriptador.content = "Texto de Prueba"
+        encriptador.encrypt_content()
+        print(encriptador.encoded_content)
+        self.assertNotEqual(encriptador.encoded_content, "Texto de Prueba")
+
 if __name__ == "__main__":
     unittest.main()
