@@ -11,8 +11,8 @@ from app.models.text import Text
 class Encriptador(db.Model):
     __tablename__ = "encriptador"
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    content : str = db.Column(db.String(120), nullable=False)
-    encoded_content: bytes = db.Column(db.LargeBinary, nullable=False)
+    content : str = db.Column(db.String(1000), nullable=False)
+    key: bytes = db.Column(db.LargeBinary, nullable=False)
 
     def save(self) -> "Encriptador":
         db.session.add(self)
@@ -24,12 +24,13 @@ class Encriptador(db.Model):
         db.session.commit()
 
     def encrypt_content(self):
-        key = Fernet.generate_key()
-        f = Fernet(key)
-        self.encoded_content = f.encrypt(self.content.encode('utf-8'))
+        self.key = Fernet.generate_key()
+        f = Fernet(self.key)
+        self.content = f.encrypt(self.content.encode('utf-8'))
 
-    
-
+    def decrypt_content(self):
+        self.content =Fernet(self.key).decrypt(self.content)
+        self.content = self.content.decode('utf-8')
     @classmethod
     def find(cls, id: int) -> "Encriptador":
         return cls.query.get(id)

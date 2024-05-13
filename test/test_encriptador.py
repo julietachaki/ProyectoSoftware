@@ -10,7 +10,7 @@ class EncriptadorTestCase(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
-
+    
     def tearDown(self):
         db.session.remove()
         db.drop_all()
@@ -20,14 +20,14 @@ class EncriptadorTestCase(unittest.TestCase):
         encriptador = Encriptador()
         encriptador.content = "Texto de Prueba"
         self.assertEqual(encriptador.content, "Texto de Prueba")
-    
+        
     def test_encriptador_save(self):
         encriptador = Encriptador()
         encriptador.content="Texto de Prueba"
         encriptador.encrypt_content()
         encriptador.save()
         self.assertGreaterEqual(encriptador.id, 1)
-        self.assertEqual(encriptador.content, "Texto de Prueba")
+        self.assertNotEqual(encriptador.content, "Texto de Prueba")
     
     def test_encriptador_delete(self):
         encriptador = Encriptador()
@@ -46,13 +46,20 @@ class EncriptadorTestCase(unittest.TestCase):
         self.assertIsNotNone(encriptador_find)
         self.assertEqual(encriptador_find.id, encriptador.id)
         self.assertEqual(encriptador_find.content, encriptador.content)
-        self.assertEqual(encriptador_find.encoded_content, encriptador.encoded_content)
+
     def test_encriptador_encrypt_content(self):
         encriptador = Encriptador()
         encriptador.content = "Texto de Prueba"
         encriptador.encrypt_content()
-        print(encriptador.encoded_content)
-        self.assertNotEqual(encriptador.encoded_content, "Texto de Prueba")
+        print(encriptador.content)
+        self.assertNotEqual(encriptador.content, "Texto de Prueba")
+    def test_decrypt_content(self):
+        encriptador = Encriptador()
+        encriptador.content = "Texto de Prueba"
+        encriptador.encrypt_content()
+        encriptador.decrypt_content()
+        encriptador.save()
+        self.assertEqual(encriptador.content, 'Texto de Prueba')
 
 if __name__ == "__main__":
     unittest.main()

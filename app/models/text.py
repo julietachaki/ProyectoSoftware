@@ -21,6 +21,8 @@ class Text(db.Model):  # Hereda de db.Model, lo que indica que es un modelo de b
     histories = db.relationship("TextHistory", backref="text", lazy=True)
     user_id: int = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     
+    encriptador_id: int = db.Column(db.Integer, db.ForeignKey("encriptador.id"), nullable=True)
+    encriptador = db.relationship("Encriptador", backref="text", uselist=False)
     def save(self) -> "Text":
         db.session.add(self)
         db.session.commit()
