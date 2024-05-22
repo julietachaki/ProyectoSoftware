@@ -32,6 +32,7 @@ class Encriptador(db.Model):
         self.content =Fernet(self.key).decrypt(self.content)
         self.content = self.content.decode('utf-8')
     @classmethod
+
     def find(cls, id: int) -> "Encriptador":
         return cls.query.get(id)
 

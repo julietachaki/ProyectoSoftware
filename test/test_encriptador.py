@@ -49,7 +49,7 @@ class EncriptadorTestCase(unittest.TestCase):
 
     def test_encriptador_encrypt_content(self):
         encriptador = Encriptador()
-        encriptador.content = "Texto de Prueba"
+        encriptador.content = "Texto de Prueba 345"
         encriptador.encrypt_content()
         print(encriptador.content)
         self.assertNotEqual(encriptador.content, "Texto de Prueba")
