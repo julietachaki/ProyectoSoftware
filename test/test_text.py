@@ -5,6 +5,7 @@ from flask import current_app
 
 from app import create_app, db
 from app.models import User, UserData
+from app.models.encriptador import Encriptador
 from app.models.text import Text
 from app.models.text_history import TextHistory
 
@@ -64,6 +65,21 @@ class TextTestCase(unittest.TestCase):
         text.save()
         # Verifica que el usuario asignado al texto sea el esperado
         self.assertEqual(text.user_id, user.id)
+
+    def test_save_with_encriptador(self):
+        # Create a Text object
+        text_content = "Texto a probar"
+        text = Text(content=text_content, length=len(text_content), language="es")
+        db.session.add(text)
+        db.session.commit()
+
+        encriptador = Encriptador(content=text_content)
+        encriptador.encrypt_content()
+        text.encriptador = encriptador
+
+        text.save()
+        self.assertEqual(text.encriptador_id, encriptador.id)
+
 
     def test_text_delete(self):
         text = self.create_text()
