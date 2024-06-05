@@ -22,7 +22,6 @@ class Text(db.Model):  # Hereda de db.Model, lo que indica que es un modelo de b
     # Define la relación con TextHistory y User
     histories = db.relationship("TextHistory", backref="text", lazy=True)
     user_id: int = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    
     def save(self) -> "Text":
         db.session.add(self)
         db.session.commit()
@@ -44,12 +43,14 @@ class Text(db.Model):  # Hereda de db.Model, lo que indica que es un modelo de b
     @classmethod
     def find_by(cls, **kwargs) -> List["Text"]:
         return cls.query.filter_by(**kwargs).all()
+    
+    def encrypt(self, key):
+        self.key = EncriptadorSV.generate_key(key)
+        self.content = EncriptadorSV.encrypt_content(self.content, self.key)
 
-    def encrypt(self,key):
-        # key = EncriptadorSV.generate_key()
-        self.content = EncriptadorSV.encrypt_content(self.content,key.encode('utf-8'))
-    def desencrypt(self,key):
-        self.content = EncriptadorSV.decrypt_content(self.content,key)
+    def desencrypt(self, key):
+        self.key = EncriptadorSV.generate_key(key)
+        self.content = EncriptadorSV.decrypt_content(self.content, self.key)
     def change_content(self, new_content: str) -> None:
         # Cambia el contenido del texto y guarda la versión anterior en TextHistory.
         #! ESTO NO SE HACE

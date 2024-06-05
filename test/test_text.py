@@ -67,17 +67,17 @@ class TextTestCase(unittest.TestCase):
 
     def test_text_encrypt(self):
         text = self.create_text()
-        print(text.content)
-        key="123"
+        print("\n Contenido original:", text.content)
+        key = "1232"
         text.save()
         text.encrypt(key)
         text.update(text.id)
         self.assertNotEqual(text.content, "Texto a Encriptar")
+        print("Contenido cifrado:", text.content)
 
     def test_text_desencrypt(self):
         text = self.create_text()
-        key = b"123"
-        print(text.content)
+        key = "123"
         text.save()
         text.encrypt(key)
         text.update(text.id)
