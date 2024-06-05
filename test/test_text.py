@@ -5,7 +5,6 @@ from flask import current_app
 
 from app import create_app, db
 from app.models import User, UserData
-from app.models.encriptador import Encriptador
 from app.models.text import Text
 from app.models.text_history import TextHistory
 
@@ -19,7 +18,7 @@ class TextTestCase(unittest.TestCase):
 
     def tearDown(self):
         db.session.remove()
-        db.drop_all()
+        #db.drop_all()
         self.app_context.pop()
 
     def test_app(self):
@@ -66,20 +65,25 @@ class TextTestCase(unittest.TestCase):
         # Verifica que el usuario asignado al texto sea el esperado
         self.assertEqual(text.user_id, user.id)
 
-    def test_save_with_encriptador(self):
-        # Create a Text object
-        text_content = "Texto a probar"
-        text = Text(content=text_content, length=len(text_content), language="es")
-        db.session.add(text)
-        db.session.commit()
-
-        encriptador = Encriptador(content=text_content)
-        encriptador.encrypt_content()
-        text.encriptador = encriptador
-
+    def test_text_encrypt(self):
+        text = self.create_text()
+        print(text.content)
+        key="123"
         text.save()
-        self.assertEqual(text.encriptador_id, encriptador.id)
+        text.encrypt(key)
+        text.update(text.id)
+        self.assertNotEqual(text.content, "Texto a Encriptar")
 
+    def test_text_desencrypt(self):
+        text = self.create_text()
+        key = b"123"
+        print(text.content)
+        text.save()
+        text.encrypt(key)
+        text.update(text.id)
+        text.desencrypt(key)
+        text.update(text.id)
+        self.assertEqual(text.content, "Texto a Encriptar")
 
     def test_text_delete(self):
         text = self.create_text()

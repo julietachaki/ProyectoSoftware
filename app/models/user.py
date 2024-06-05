@@ -22,7 +22,7 @@ class User(
     users_rs = db.relationship("Text", backref="USER", lazy=True)
     # Relación con la tabla 'UserData' (datos de usuario), establecida a través de la propiedad 'user' en la clase UserData
     data = db.relationship("UserData", uselist=False, back_populates="user")  # type: ignore
-    
+    #users_fl = db.relationship("File", backref="USER", lazy=True)
     # Constructor de la clase User, que puede recibir un objeto UserData opcionalmente
     def __init__(self, user_data: UserData = None):
         self.data = user_data
