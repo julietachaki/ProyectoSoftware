@@ -14,10 +14,10 @@ class TextHistoryTestCase(unittest.TestCase):
         self.app_context.push()
         db.create_all()
 
-    # def tearDown(self):
-    #     db.session.remove()
-    #     db.drop_all()
-    #     self.app_context.pop()
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
 
     def test_text_history_save(self):
         text = Text()
