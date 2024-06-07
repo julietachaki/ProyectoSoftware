@@ -7,10 +7,29 @@ from app import create_app, db
 from app.models import User, UserData
 from app.models.text import Text
 from app.models.text_history import TextHistory
+from app.services.encriptador import EncriptadorSV
+from app.services.text_services import TextService
+from app.services.user_services import UserService
 
+user_service = UserService()
+text_service= TextService()
+encriptador = EncriptadorSV()
 
 class TextTestCase(unittest.TestCase):
     def setUp(self):
+        self.USERNAME_PRUEBA = 'julichaki'
+        self.EMAIL_PRUEBA = 'test@test.com'
+        self.PASSWORD_PRUEBA = '123456'
+        self.ADDRESS_PRUEBA = 'Address 1234'
+        self.FIRSTNAME_PRUEBA = 'Juli'
+        self.LASTNAME_PRUEBA = 'Chaki'
+        self.PHONE_PRUEBA = '54260123456789'
+        self.CITY_PRUEBA = 'San Rafael'
+        self.COUNTRY_PRUEBA = 'Argentina'
+        self.CONTENT = "Texto a Encriptar"
+        self.LENGHT = len(self.CONTENT)
+        self.LANGUAJE = "es"
+
         self.app = create_app()
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -24,77 +43,61 @@ class TextTestCase(unittest.TestCase):
     def test_app(self):
         self.assertIsNotNone(current_app)
 
-    def create_text(self):
-        text = Text()
-        text.content = "Texto a Encriptar"
-        text.length = len(text.content)
-        text.language = "es"
-        return text
+
     
     def test_text(self):
-        text = self.create_text()
-        self.assertEqual(text.content, "Texto a Encriptar")
-        self.assertEqual(text.length, 17)
-        self.assertEqual(text.language, "es")
+        text = self.__get_text()
+        self.assertEqual(text.content, self.CONTENT)
+        self.assertEqual(text.length, self.LENGHT)
+        self.assertEqual(text.language, self.LANGUAJE)
 
     def test_text_save(self):
-        text = self.create_text()
-        text.save()
+        text = self.__get_text()
+        text_service.save(text)
         self.assertGreaterEqual(text.id, 1)
-        self.assertEqual(text.content, "Texto a Encriptar")
-        self.assertEqual(text.length, 17)
-        self.assertEqual(text.language, "es")
+        self.assertEqual(text.content, self.CONTENT)
+        self.assertEqual(text.length, self.LENGHT)
+        self.assertEqual(text.language, self.LANGUAJE)
     
     def test_text_save_with_user(self):
-        data = UserData()
-        data.firstname = "Julieta"
-        data.lastname = "Chaki"
-        data.address = "Address 1234"
-        data.city = "San Rafael"
-        data.country = "Argentina"
-        data.phone = "54260123456789"
-        user = User(data)
-        user.email = "test@test.com"
-        user.username = "julietachaki"
-        user.password = "Qvv3r7y"
-        user.save()
+        user = self.__get_user()
+        user_service.save(user)
         # Crea un texto y asigna el usuario
-        text = self.create_text()
+        text = self.__get_text()
         text.user_id = user.id  # Asigna el usuario al texto
-        text.save()
+        text_service.save(text)
         # Verifica que el usuario asignado al texto sea el esperado
         self.assertEqual(text.user_id, user.id)
 
     def test_text_encrypt(self):
-        text = self.create_text()
-        print("\n Contenido original:", text.content)
-        key = "1232"
-        text.save()
-        text.encrypt(key)
-        text.update(text.id)
-        self.assertNotEqual(text.content, "Texto a Encriptar")
-        print("Contenido cifrado:", text.content)
+        text = self.__get_text()
+        text_service.save(text)
+        key=encriptador.generate_key("123")
+        text.content=  encriptador.encrypt_content(text.content,key)
+        text_service.update(text, text.id)
+        self.assertNotEqual(text.content, self.CONTENT)
+
 
     def test_text_desencrypt(self):
-        text = self.create_text()
-        key = "123"
-        text.save()
-        text.encrypt(key)
-        text.update(text.id)
-        text.desencrypt(key)
-        text.update(text.id)
-        self.assertEqual(text.content, "Texto a Encriptar")
+        text = self.__get_text()
+        text_service.save(text)
+        key =encriptador.generate_key("123")
+        text.content=  encriptador.encrypt_content(text.content,key)
+        text_service.update(text, text.id)
+        text.content = encriptador.decrypt_content(text.content , key)
+        text_service.update(text, text.id)
+        self.assertEqual(text.content, self.CONTENT)
 
     def test_text_delete(self):
-        text = self.create_text()
-        text.save()
-        text.delete()
+        text = self.__get_text()
+        text_service.save(text)
+        text_service.delete(text)
         self.assertIsNone(Text.query.get(text.id))
 
     def test_text_find(self):
-        text = self.create_text()
-        text.save()
-        text_find = Text.find(1)
+        text = self.__get_text()
+        text_service.save(text)
+        text_find = text_service.find(1)
         self.assertIsNotNone(text_find)
         self.assertEqual(text_find.id, text.id)
         self.assertEqual(text_find.content, text.content)
@@ -102,8 +105,8 @@ class TextTestCase(unittest.TestCase):
 
     def test_change_content(self):
         # Crea un objeto Text y guarda una versión
-        text = self.create_text()
-        text.save()
+        text = self.__get_text()
+        text_service.save(text)
         old_content = text.content
         # Cambia el contenido
         new_content = "Texto a Nuevo  Encriptar"
@@ -114,6 +117,27 @@ class TextTestCase(unittest.TestCase):
         history = TextHistory.query.filter_by(text_id=text.id).first()
         self.assertIsNotNone(history)
         self.assertEqual(history.content, old_content)
+        
+    def __get_text(self):
+        text = Text()
+        text.content = self.CONTENT
+        text.length = self.LENGHT
+        text.language = self.LANGUAJE
+        return text
+    def __get_user(self):
+        data = UserData()
+        data.firstname = self.FIRSTNAME_PRUEBA
+        data.lastname = self.LASTNAME_PRUEBA
+        data.phone = self.PHONE_PRUEBA
+        data.address = self.ADDRESS_PRUEBA
+        data.city = self.CITY_PRUEBA
+        data.country = self.COUNTRY_PRUEBA
+        
+        user = User(data)
+        user.username = self.USERNAME_PRUEBA
+        user.email = self.EMAIL_PRUEBA
+        user.password = self.PASSWORD_PRUEBA
+        return user
 
 if __name__ == "__main__":
     unittest.main()

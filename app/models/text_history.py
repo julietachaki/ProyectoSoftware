@@ -3,7 +3,9 @@ from typing import List
 
 from app import db
 from app.models.text import Text
+from app.services.text_services import TextService
 
+text_service = TextService()
 
 @dataclass(init=False, repr=True, eq=True)
 class TextHistory(db.Model):
@@ -42,11 +44,8 @@ class TextHistory(db.Model):
     def change_to_version(self, version_id: int) -> None:
         # Cambia a una versión específica del texto.
         version = TextHistory.find(version_id)
-        #! ESTO NO SE HACE
-        from app.models.text import \
-            Text  # Importa dentro de la función o método
-
+        
         if version:
-            text = Text.find(self.text_id)
+            text = text_service.find( self.text_id)
             text.content = version.content
             db.session.commit()

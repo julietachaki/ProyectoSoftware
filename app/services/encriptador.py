@@ -15,7 +15,8 @@ class EncriptadorSV:
     def encrypt_content(content, key):
         f = Fernet(key)
         encrypted_content = f.encrypt(content.encode('utf-8'))
-        return encrypted_content.decode('utf-8')
+        content = encrypted_content.decode('utf-8')
+        return content
     
     @staticmethod
     def decrypt_content(content, key):
