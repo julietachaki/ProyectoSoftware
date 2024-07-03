@@ -135,5 +135,4 @@ pyvenv.cfg
 #docker files
 _data/pgdata
 #Migrations
-.migrations
 migrations/
