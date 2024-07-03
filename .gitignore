@@ -134,3 +134,6 @@ lib64
 pyvenv.cfg
 #docker files
 _data/pgdata
+#Migrations
+.migrations
+migrations/
