@@ -75,6 +75,7 @@ class TextTestCase(unittest.TestCase):
         key=encriptador.generate_key("123")
         text.content=  encriptador.encrypt_content(text.content,key)
         text_service.update(text, text.id)
+        print(text.content)
         self.assertNotEqual(text.content, self.CONTENT)
 
 
@@ -86,6 +87,7 @@ class TextTestCase(unittest.TestCase):
         text_service.update(text, text.id)
         text.content = encriptador.decrypt_content(text.content , key)
         text_service.update(text, text.id)
+        print(text.content)
         self.assertEqual(text.content, self.CONTENT)
 
     def test_text_delete(self):
