@@ -26,6 +26,8 @@ def create_app() -> None:
     #https://flask.palletsprojects.com/es/main/blueprints/
     from app.resources import home
     app.register_blueprint(home, url_prefix='/api/v1')
+
+    
     
     @app.shell_context_processor
     def shell_context():
