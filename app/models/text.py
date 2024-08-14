@@ -20,7 +20,7 @@ class Text(db.Model):  # Hereda de db.Model, lo que indica que es un modelo de b
 
     def change_content(self, new_content: str) -> None:
         # Cambia el contenido del texto y guarda la versión anterior en TextHistory.
-        #! ESTO NO SE HACE
+
         from app.models.text_history import \
             TextHistory  # Importa dentro de la función o método
 
