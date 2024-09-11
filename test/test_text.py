@@ -43,7 +43,10 @@ class TextTestCase(unittest.TestCase):
     def test_app(self):
         self.assertIsNotNone(current_app)
 
-
+    def check(self, text):
+        self.assertEqual(text.content, self.CONTENT)
+        self.assertEqual(text.length, self.LENGHT)
+        self.assertEqual(text.language, self.LANGUAJE)
     
     def test_text(self):
         text = self.__get_text()
@@ -55,9 +58,9 @@ class TextTestCase(unittest.TestCase):
         text = self.__get_text()
         text_service.save(text)
         self.assertGreaterEqual(text.id, 1)
-        self.assertEqual(text.content, self.CONTENT)
-        self.assertEqual(text.length, self.LENGHT)
-        self.assertEqual(text.language, self.LANGUAJE)
+        self.check(text)
+
+
     
     def test_text_save_with_user(self):
         user = self.__get_user()
@@ -67,6 +70,7 @@ class TextTestCase(unittest.TestCase):
         text.user_id = user.id  # Asigna el usuario al texto
         text_service.save(text)
         # Verifica que el usuario asignado al texto sea el esperado
+        self.check(text)
         self.assertEqual(text.user_id, user.id)
 
     def test_text_encrypt(self):
