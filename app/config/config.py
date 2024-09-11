@@ -11,10 +11,17 @@ class Config(object):
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
     
     @staticmethod
     def init_app(app):
         pass
+
+class TestConfig(Config):
+    TESTING = True
+    DEBUG = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URI')
 
 class DevelopmentConfig(Config):
     TESTING = True
@@ -34,6 +41,7 @@ class ProductionConfig(Config):
 
 def factory(app):
     configuration = {
+        'testing': TestConfig,
         'development': DevelopmentConfig,
         'production': ProductionConfig
     }
